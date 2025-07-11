@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
+
 const PromptToLocation = async (prompt) => {
   const url = "https://api.openai.com/v1/chat/completions";
   const data = {
-    model: "gpt-3.5-turbo-0613",
+    model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: prompt }],
     functions: [
       {
@@ -64,16 +65,18 @@ const PromptToLocation = async (prompt) => {
       const promptResponse = JSON.parse(
         data.choices[0].message.function_call.arguments
       );
-      console.log(promptResponse);
-      const localString = () => {
+      console.log("chat gpt reponse: ",promptResponse);
+
+      const locationString = () => {
         if (promptResponse.countryCode === "US") {
           return `${promptResponse.city}, ${promptResponse.state}, ${promptResponse.country}`;
         } else {
           return `${promptResponse.city}, ${promptResponse.country}`;
         }
       };
+      console.log(locationString());
       const promptData = {
-        localString: localString(),
+        locationString: locationString(),
         units: promptResponse.unit,
         country: promptResponse.country,
         USstate: promptResponse.USstate,

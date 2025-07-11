@@ -1,5 +1,10 @@
 import PropTypes from "prop-types";
+import "./Description.css"; 
+
 const Description = ({ isLoading, weatherDescription }) => {
+  if(!weatherDescription) {
+    return <p className="description-text">No description available yet.</p>; 
+  }
   return (
     <div className="description">
       <h2>Description</h2>

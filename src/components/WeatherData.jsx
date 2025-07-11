@@ -1,7 +1,7 @@
 
 const WeatherData = async (locationData) => {
   try {
-    console.log(" what islocationData", locationData);
+    
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?lat=${
         locationData.lat
@@ -13,7 +13,7 @@ const WeatherData = async (locationData) => {
     }
 
     const data = await response.json();
-    console.log("what am I getting here?", data);
+    
     return data;
   } catch (error) {
     console.error("Error fetching weather data:", error);

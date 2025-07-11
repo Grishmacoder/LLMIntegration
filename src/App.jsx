@@ -9,37 +9,48 @@ function App() {
   const [prompt, setPrompt] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
   const [weatherDataLoading, setWeatherDataLoading] = useState(false);
-
+  const [weatherDescriptionLoading, setWeatherDescriptionLoading] = useState(
+    false
+  );
   const [units, setUnits] = useState("metric");
 
-  const { weatherData, promptData, location, error } = useApiRequest(prompt);
+  const { weatherData, promptData, location, error, weatherDescription } = useApiRequest(prompt);
 
   const handleFormSubmit = (newPrompt) => {
     setPrompt(newPrompt);
     setErrorMsg(null);
     setWeatherDataLoading(true);
   };
+
   useEffect(() => {
     if (error) {
       setErrorMsg(error);
       setWeatherDataLoading(false);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (promptData && promptData.units) {
+      setUnits(promptData.units);
+    }
+  }, [promptData]);
+
   useEffect(() => {
     if (weatherData) {
       setWeatherDataLoading(false);
     }
   }, [weatherData]);
-  // useEffect(() => {
-  //   if (weatherDescription) {
-  //     setWeatherDescriptionLoading(false);
-  //   }
-  // }, [weatherDescription]);
-  // useEffect(() => {
-  //   if (promptData && promptData.units) {
-  //     setUnits(promptData.units);
-  //   }
-  // }, [promptData]);
+
+  useEffect(() => {
+    if (weatherDescription) {
+      setWeatherDescriptionLoading(false);
+    }
+  }, [weatherDescription]);
+  useEffect(() => {
+    if (promptData && promptData.units) {
+      setUnits(promptData.units);
+    }
+  }, [promptData]);
 
   return (
     <>
@@ -51,7 +62,7 @@ function App() {
           {console.log("promptData:", promptData)}
           {console.log("weatherDataLoading:", weatherDataLoading)}
           {console.log("error:", error)}
-          {/* {weatherDescription ? (
+          {weatherDescription ? (
             <Description
               isLoading={weatherDescriptionLoading}
               description={weatherDescription}
@@ -61,13 +72,13 @@ function App() {
               isLoading={weatherDescriptionLoading}
               description="No description available."
             />
-          )} */}
+          )}
         </header>
         <main className="main-content">
           <WeatherCard
+            isLoading={weatherDataLoading}
             data={weatherData}
             units={units}
-            isLoading={weatherDataLoading}
             country={promptData.country}
             USstate={location && location[0] ? location[0].state : ""}
             setUnits={setUnits}
