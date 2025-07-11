@@ -1,35 +1,81 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useEffect, useState } from "react";
+import WeatherForm from "./components/WeatherForm";
+import WeatherCard from "./components/WeatherCard";
+import useApiRequest from "./components/useApiRequest";
+import Description from "./components/Description";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [prompt, setPrompt] = useState("");
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [weatherDataLoading, setWeatherDataLoading] = useState(false);
+
+  const [units, setUnits] = useState("metric");
+
+  const { weatherData, promptData, location, error } = useApiRequest(prompt);
+
+  const handleFormSubmit = (newPrompt) => {
+    setPrompt(newPrompt);
+    setErrorMsg(null);
+    setWeatherDataLoading(true);
+  };
+  useEffect(() => {
+    if (error) {
+      setErrorMsg(error);
+      setWeatherDataLoading(false);
+    }
+  }, [error]);
+  useEffect(() => {
+    if (weatherData) {
+      setWeatherDataLoading(false);
+    }
+  }, [weatherData]);
+  // useEffect(() => {
+  //   if (weatherDescription) {
+  //     setWeatherDescriptionLoading(false);
+  //   }
+  // }, [weatherDescription]);
+  // useEffect(() => {
+  //   if (promptData && promptData.units) {
+  //     setUnits(promptData.units);
+  //   }
+  // }, [promptData]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="container">
+        <header className="header">
+          <h1 className="page-title">Current Weather</h1>
+          <WeatherForm onSubmit={handleFormSubmit} />
+          {error && <p className="error">{errorMsg.message}</p>}
+          {console.log("promptData:", promptData)}
+          {console.log("weatherDataLoading:", weatherDataLoading)}
+          {console.log("error:", error)}
+          {/* {weatherDescription ? (
+            <Description
+              isLoading={weatherDescriptionLoading}
+              description={weatherDescription}
+            />
+          ) : (
+            <Description
+              isLoading={weatherDescriptionLoading}
+              description="No description available."
+            />
+          )} */}
+        </header>
+        <main className="main-content">
+          <WeatherCard
+            data={weatherData}
+            units={units}
+            isLoading={weatherDataLoading}
+            country={promptData.country}
+            USstate={location && location[0] ? location[0].state : ""}
+            setUnits={setUnits}
+          />
+        </main>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
